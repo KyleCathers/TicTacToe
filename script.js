@@ -2,9 +2,26 @@
 // O X O
 // X O X
 
+// html selectors
 const gridBoxArray = document.querySelectorAll('.gridBox');
 const restartButton = document.querySelector('.restart');
 const messageBox = document.querySelector('.message');
+
+
+// gameBoard module pattern object
+//
+// contains ...
+//      initialize board function, sets tiles to blank
+//      enter turn function to insert player selection to board
+//      checkturn function to make sure tile is not taken already
+//      printboard function to print board state to console
+//      updatetiles function to update board state to tiles (DOM)
+//      getboard array to return board array
+//
+// returns ...
+//      enterturn, initializeboard, printboard, getboardarray
+
+
 
 const gameBoard = (() => {
     let gameBoardArray = [];
@@ -41,6 +58,7 @@ const gameBoard = (() => {
     }
 
     // print board array to console
+    // used for development purposes, unused for final design
     const printBoard = () => {
         let printString = "";
         for(let i = 0; i < rows; i++) {
@@ -71,14 +89,36 @@ const gameBoard = (() => {
     return { enterTurn, initializeBoard, printBoard, getBoardArray }
 })();
 
-// Player factory object with its own name and icon (X or O);
+// player factory object
+//
+// contains ...
+//      player name
+//      player icon (e.g. X or O)
+//
+// returns ...
+//      player object
+
 const player = (name, icon) => {
     return { name, icon };
 }
 
+
+// game module pattern object
+// contains ...
+//      array of 2 players objects
+//      play function, initializing game flow & event listeners for tiles/restart
+//      change turns function
+//      update message function for UI
+//      restart function for reinitializing game
+//      checkgame to see if game is a win or draw
+//
+// returns ...
+//      play function for external use
+
 const game = (() => {
     let turn = 0;
     let gameOver = false;
+    let draw = false;
     let totalTurns = 0;
 
     // players[0/1].name/icon
@@ -111,7 +151,7 @@ const game = (() => {
 
     // update message box with gameover message or current players turn
     const updateMessage = () => {
-        totalTurns == 9 ? messageBox.innerHTML = `Game over! The game is a draw :|` :
+        draw ? messageBox.innerHTML = `Game over! The game is a draw :|` :
             gameOver ? messageBox.innerHTML = `Game over! ${players[turn].name} wins` : 
             messageBox.innerHTML = `It is ${players[turn].name}'s move!`;
     };
@@ -122,16 +162,15 @@ const game = (() => {
         turn = 0;
         totalTurns = 0;
         gameOver = false;
+        draw = false;
         updateMessage();
     };
 
     // check if somebody won or if its a draw
     const checkGame = () => {
-        let arrayCheck1 = ['X', 'X', 'X'];
-        let arrayCheck2 = ['O', 'O', 'O'];
-
         if(totalTurns == 9) {   // draw
             gameOver = true;
+            draw = true;
         }
 
         // check rows
@@ -140,10 +179,12 @@ const game = (() => {
                 (gameBoard.getBoardArray()[i][1] == 'X') &&
                 (gameBoard.getBoardArray()[i][2] == 'X')) {
                 gameOver = true;
+                draw = false;
             } else if ((gameBoard.getBoardArray()[i][0] == 'O') &&
                         (gameBoard.getBoardArray()[i][1] == 'O') &&
                         (gameBoard.getBoardArray()[i][2] == 'O')) {
                 gameOver = true;
+                draw = false;
             }
         }
 
@@ -153,11 +194,13 @@ const game = (() => {
                 (gameBoard.getBoardArray()[1][j] == 'X') &&
                 (gameBoard.getBoardArray()[2][j] == 'X')) {
                 gameOver = true;
+                draw = false;
 
             } else if ((gameBoard.getBoardArray()[0][j] == 'O') &&
                         (gameBoard.getBoardArray()[1][j] == 'O') &&
                         (gameBoard.getBoardArray()[2][j] == 'O')) {
                 gameOver = true;
+                draw = false;
             }
         }
         
@@ -166,24 +209,30 @@ const game = (() => {
             (gameBoard.getBoardArray()[1][1] == 'X') &&
             (gameBoard.getBoardArray()[2][2] == 'X')) {
             gameOver = true;
+            draw = false;
 
         } else if ((gameBoard.getBoardArray()[0][2] == 'X') &&
                     (gameBoard.getBoardArray()[1][1] == 'X') &&
                     (gameBoard.getBoardArray()[2][0] == 'X')) {
             gameOver = true;
+            draw = false;
 
         } else if ((gameBoard.getBoardArray()[0][0] == 'O') &&
                     (gameBoard.getBoardArray()[1][1] == 'O') &&
                     (gameBoard.getBoardArray()[2][2] == 'O')) {
             gameOver = true;
+            draw = false;
+
         } else if ((gameBoard.getBoardArray()[0][2] == 'O') &&
                     (gameBoard.getBoardArray()[1][1] == 'O') &&
                     (gameBoard.getBoardArray()[2][0] == 'O')) {
             gameOver = true;
+            draw = false;
         };
     };
 
     return { play };
 })();
 
+// start game
 game.play();
