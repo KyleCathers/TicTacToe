@@ -21,7 +21,7 @@ const messageBox = document.querySelector('.message');
 // returns ...
 //      enterturn, initializeboard, printboard, getboardarray
 
-const gameBoard = (() => {o
+const gameBoard = (() => {
     let gameBoardArray = [];
     const rows = 3;
     const columns = 3;
